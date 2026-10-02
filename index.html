@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Five Small Things</title>
+    <meta name="description" content="One page, five components, one obsession each. A motion notebook by David O." />
+    <meta name="theme-color" content="#0a0b0e" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header class="mast">
+      <p class="eyebrow">A motion notebook <span>·</span> David O. <span>·</span> 2026</p>
+      <h1>Five Small Things</h1>
+      <p class="dek">One page, five components, one obsession each. Every one gets a live demo, the curve and duration it runs on, and a few sentences on why. Anyone can build a toggle. The interesting part is explaining why it moves the way it does.</p>
+      <ol class="toc">
+        <li><a href="#orb"><span>01</span>The Orb</a></li>
+        <li><a href="#toggle"><span>02</span>The Toggle</a></li>
+        <li><a href="#sheet"><span>03</span>The Sheet</a></li>
+        <li class="soon"><span>04</span>The Number</li>
+        <li class="soon"><span>05</span>The Press</li>
+      </ol>
+    </header>
+
+    <main>
+      <section class="thing" id="orb" aria-labelledby="orb-title">
+        <div class="thing-head">
+          <span class="num">01</span>
+          <h2 id="orb-title">The Orb</h2>
+          <p class="obsession">Obsession: <em>lag.</em> The first small thing is a small sun.</p>
+        </div>
+
+        <div class="thing-body">
+          <figure class="stage" id="orb-stage">
+            <div class="stage-canvas" id="orb-canvas-home"></div>
+            <div class="stage-shimmer" aria-hidden="true"></div>
+            <figcaption class="stage-cap">Live: <b id="orb-count">65,536</b> particles, simulated on the GPU. Drag to orbit.</figcaption>
+            <div class="stage-ctl" id="orb-inline">
+              <label><span>Spin</span><input type="range" data-bind="vortex.strength" /><output></output></label>
+              <label><span>Drag</span><input type="range" data-bind="drag.coef" /><output></output></label>
+              <label><span>Turbulence</span><input type="range" data-bind="turbulence.strength" /><output></output></label>
+              <button class="yank" id="yank" title="Step the spin and measure how the particles respond">Yank the spin</button>
+            </div>
+            <button class="open-lab" id="open-lab">Open the lab <span aria-hidden="true">→</span></button>
+            <button class="stage-play" id="stage-play" hidden>▶ Play</button>
+          </figure>
+
+          <aside class="spec">
+            <dl class="spec-list">
+              <div><dt>Curve</dt><dd><code>v(t) = v<sub>field</sub> · (1 − e<sup>−t/τ</sup>)</code></dd></div>
+              <div><dt>τ = m / k</dt><dd><span id="spec-tau">0.40 s</span> <span class="spec-sub">predicted, vortex particles</span></dd></div>
+              <div><dt>τ, measured</dt><dd><span id="spec-tau-m">—</span> <span class="spec-sub" id="spec-tau-note">press Yank to measure it on the GPU</span></dd></div>
+              <div><dt>Settles (95%)</dt><dd><span id="spec-settle">1.19 s</span> <span class="spec-sub" id="spec-settle-m"></span></dd></div>
+              <div><dt>Overshoot</dt><dd><span id="spec-over">0%</span> <span class="spec-sub" id="spec-over-note">drag is first-order; nothing bounces unless the field does</span></dd></div>
+              <div><dt>Step</dt><dd>1/120 s fixed, semi-implicit Euler, drag solved implicitly</dd></div>
+            </dl>
+            <figure class="curve">
+              <svg id="curve" viewBox="0 0 320 150" role="img" aria-label="Response curves for core, vortex and dust particles"></svg>
+              <figcaption><span class="k core"></span>core <span class="k vortex"></span>vortex <span class="k dust"></span>dust <span class="k meas"></span>measured <span class="curve-x">0 → 3 s</span></figcaption>
+            </figure>
+            <div class="why">
+              <p>Nothing in the orb is animated. Every particle is pushed by a field and held back by drag, so when you yank the spin it lags, catches up and settles. The curve isn’t chosen: it falls out of each particle’s mass-to-drag ratio, which is why the heavy dust trails the core by a second.</p>
+              <p>That lag is the whole effect. An orb that responds instantly reads as a video. One that has to catch up reads as <em>stuff</em>.</p>
+              <p class="why-small">The measured τ comes in under the prediction because of pressure coupling. Particles drifting across the vortex’s shear pick up spin from the air around them, so they catch up faster than drag alone allows. Turn it off on the Drag node in the lab and the two numbers agree.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+
+      <section class="thing" id="toggle" aria-labelledby="toggle-title">
+        <div class="thing-head">
+          <span class="num">02</span>
+          <h2 id="toggle-title">The Toggle</h2>
+          <p class="obsession">Obsession: <em>overshoot,</em> and how little of it you need.</p>
+        </div>
+
+        <div class="thing-body">
+          <figure class="stage stage-toggle">
+            <figcaption class="stage-cap">Tap it, drag it, flick it, or tap it twice, fast.</figcaption>
+            <div class="tg-hero" id="tg-big"></div>
+            <div class="tg-ladder-wrap">
+              <div class="tg-ladder" id="tg-ladder"></div>
+              <button class="yank" id="tg-hammer" title="Toggle every switch twice, 110 ms apart">Double-tap all four</button>
+            </div>
+            <div class="stage-ctl tg-ctl">
+              <label><span>Overshoot</span><input type="range" id="tg-os" min="0" max="40" step="0.5" /><output id="tg-os-out"></output></label>
+              <label><span>Response</span><input type="range" id="tg-w" min="10" max="45" step="0.1" /><output id="tg-w-out"></output></label>
+              <button class="yank" id="tg-reset"><span id="tg-default">Back to </span>8%</button>
+            </div>
+          </figure>
+
+          <aside class="spec">
+            <dl class="spec-list">
+              <div><dt>Curve</dt><dd><code>damped spring, m = 1</code> <span class="spec-sub" id="tg-kc"></span></dd></div>
+              <div><dt>Damping ζ</dt><dd><span class="mono" id="tg-zeta"></span> <span class="spec-sub">ζ = −ln(OS) / √(π² + ln²OS)</span></dd></div>
+              <div><dt>Overshoot</dt><dd><span class="mono" id="tg-over"></span> <span class="spec-sub" id="tg-px"></span></dd></div>
+              <div><dt>Peak</dt><dd><span class="mono" id="tg-peak"></span></dd></div>
+              <div><dt>Settles (±2%)</dt><dd><span class="mono" id="tg-settle"></span></dd></div>
+              <div><dt>Measured</dt><dd><span class="mono" id="tg-meas">—</span> <span class="spec-sub" id="tg-meas-note">toggle the big switch to measure it</span></dd></div>
+              <div><dt>SwiftUI</dt><dd><code id="tg-swiftui"></code></dd></div>
+              <div><dt>CSS</dt><dd><button class="copy" id="tg-copy">Copy as CSS</button> <span class="spec-sub">the same spring, sampled into <code>linear()</code></span></dd></div>
+            </dl>
+            <figure class="curve">
+              <svg id="tg-curve" viewBox="0 0 320 160" role="img" aria-label="Spring step response against a CSS ease curve"></svg>
+              <figcaption><span class="k spring"></span>spring <span class="k ease"></span>css ease 300 ms <span class="k meas"></span>measured <span class="curve-x">0 → 600 ms</span></figcaption>
+            </figure>
+            <div class="why">
+              <p>A switch that stops dead feels cheap, and one that bounces feels like a toy. At 8% the knob of a real-size switch travels 1.6 pixels past its stop. That’s too little to see, but enough to feel that something with mass arrived.</p>
+              <p>It’s a spring, not a curve, so there is no duration to restart. Tap it mid-flight and the knob keeps its velocity and <em>turns around</em>. The CSS version in the row below stops dead and starts again.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="thing" id="sheet" aria-labelledby="sheet-title">
+        <div class="thing-head">
+          <span class="num">03</span>
+          <h2 id="sheet-title">The Sheet</h2>
+          <p class="obsession">Obsession: <em>the frame after you let go.</em></p>
+        </div>
+
+        <div class="thing-body">
+          <figure class="stage stage-sheet">
+            <div class="sh-phone">
+              <div class="sh-screen" id="sh-screen">
+                <div class="sh-app" aria-hidden="true">
+                  <div class="sh-map"></div>
+                  <div class="sh-search">Search Lagos</div>
+                </div>
+                <div class="sh-ghost" aria-hidden="true"><i class="sh-snap"></i><i class="sh-proj"><em>projected</em></i></div>
+                <div class="sh-panel" id="sh-panel">
+                  <button class="sh-grabber" aria-label="Resize sheet. Use arrow keys to move between sizes."><span></span></button>
+                  <h4>Nearby</h4>
+                  <ul class="sh-list"><li><span class="sh-pin" aria-hidden="true"></span><span><b>Terra Kulture</b><small>Victoria Island · 6 min</small></span></li><li><span class="sh-pin" aria-hidden="true"></span><span><b>Nike Art Gallery</b><small>Lekki · 14 min</small></span></li><li><span class="sh-pin" aria-hidden="true"></span><span><b>Freedom Park</b><small>Lagos Island · 9 min</small></span></li><li><span class="sh-pin" aria-hidden="true"></span><span><b>Kalakuta Museum</b><small>Ikeja · 22 min</small></span></li><li><span class="sh-pin" aria-hidden="true"></span><span><b>Lekki Conservation Centre</b><small>Lekki · 18 min</small></span></li><li><span class="sh-pin" aria-hidden="true"></span><span><b>Tarkwa Bay</b><small>by boat · 25 min</small></span></li></ul>
+                </div>
+              </div>
+            </div>
+            <div class="sh-side">
+              <figcaption class="sh-cap">Drag the sheet and throw it. It lands where the flick was going, not where your finger stopped.</figcaption>
+              <div class="seg" id="sh-mode" role="group" aria-label="Hand-off">
+                <button class="on" data-mode="spring">Spring + velocity</button>
+                <button data-mode="css">CSS 300 ms ease</button>
+              </div>
+              <p class="sh-note" id="sh-mode-note">The spring starts at the finger’s speed.</p>
+              <fieldset class="sh-tune">
+                <legend>Spring <button class="sh-reset" id="sh-spring-reset" hidden>Reset</button></legend>
+                <svg class="sh-mini" id="sh-mini" viewBox="0 0 220 56" role="img" aria-label="How a 1,500 px/s throw from half to full plays out with these settings"></svg>
+                <label><span>Response</span><output id="sh-resp-out"></output><input type="range" id="sh-resp" min="0.15" max="1.2" step="0.01" /></label>
+                <label><span>Damping ζ</span><output id="sh-zeta-out"></output><input type="range" id="sh-zeta" min="0.2" max="1.5" step="0.01" /></label>
+                <label><span>Velocity carried</span><output id="sh-carry-out"></output><input type="range" id="sh-carry" min="0" max="100" step="1" /></label>
+                <label><span>Deceleration</span><output id="sh-decel-out"></output><input type="range" id="sh-decel" min="0.98" max="0.999" step="0.0005" /></label>
+              </fieldset>
+              <label class="sh-check"><input type="checkbox" id="sh-proj-on" checked /> Show the projection while dragging</label>
+              <button class="yank" id="sh-fling">Fling it for me</button>
+            </div>
+          </figure>
+
+          <aside class="spec">
+            <dl class="spec-list">
+              <div><dt>Release speed</dt><dd><span class="mono" id="sh-rel">—</span> <span class="spec-sub">least-squares slope of the last 80 ms; zero if the finger rested</span></dd></div>
+              <div><dt>Projection</dt><dd><code>y + v/1000 · r/(1 − r)</code> <span class="spec-sub"><span id="sh-proj-note"></span>; your last flick coasted <span id="sh-coast">—</span></span></dd></div>
+              <div><dt>Snap picked</dt><dd><span class="mono" id="sh-pick">—</span> <span class="spec-sub" id="sh-pick-note">nearest snap to the projection</span></dd></div>
+              <div><dt>Spring</dt><dd><code id="sh-spring"></code> <span class="spec-sub" id="sh-spring-note"></span></dd></div>
+              <div><dt>Rubber band</dt><dd><code>(1 − 1/(x·0.55/d + 1))·d</code> <span class="spec-sub">d = 30% of the screen</span></dd></div>
+              <div><dt>Hand-off</dt><dd><span class="mono" id="sh-hand">—</span> <span class="spec-sub" id="sh-hand-note">finger speed → first painted frame</span></dd></div>
+            </dl>
+            <figure class="curve">
+              <svg id="sh-curve" viewBox="0 0 320 170" role="img" aria-label="Velocity of the finger before release and the sheet after"></svg>
+              <figcaption><span class="k meas"></span>finger <span class="k paint"></span>sheet, painted <span class="k spring"></span>prediction <span class="curve-x">ms around release</span></figcaption>
+            </figure>
+            <div class="why">
+              <p>The worst moment in a sheet is the frame after you let go. If the animation starts from rest, your throw is thrown away and the sheet hesitates before it moves. Here the spring starts at exactly the finger’s speed, so letting go has no seam.</p>
+              <p>Where it lands is decided the same way. The sheet goes where the flick would have <em>carried</em> it, using the deceleration iOS scroll views use, so a short fast flick and a long slow drag can both mean “open”.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="thing soon" aria-label="Coming next">
+        <div class="soon-grid">
+          <div><span class="num">04</span><h3>The Number</h3><p>Digits that count instead of swap.</p></div>
+          <div><span class="num">05</span><h3>The Press</h3><p>What 90 milliseconds feels like.</p></div>
+        </div>
+        <p class="soon-note">Not built yet.</p>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>Built with WebGL2, no libraries. Every particle is integrated on the GPU with ping-pong float textures, and the node graph compiles to GLSL.</p>
+    </footer>
+
+    <div class="lab" id="lab" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
